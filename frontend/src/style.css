@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef7ff;
+  --color-brand-100: #d9edff;
+  --color-brand-500: #2f6fed;
+  --color-brand-600: #2158c9;
+  --color-brand-700: #1a459d;
+  --color-compliant: #16a34a;
+  --color-noncompliant: #dc2626;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+}
