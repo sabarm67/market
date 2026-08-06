@@ -8,6 +8,11 @@ interface User {
   role: 'registered' | 'admin'
 }
 
+// Module-level (not store state) so concurrent callers — e.g. the router guard on a hard
+// reload of a protected route, racing main.ts's own initial fetch — share one in-flight
+// request instead of the guard reading `loaded` before the first fetch has resolved.
+let initialLoad: Promise<void> | null = null
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
@@ -27,6 +32,12 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.loaded = true
       }
+    },
+    /** Await this before any auth-gated decision (e.g. route guards) — safe to call many times. */
+    ensureLoaded() {
+      if (this.loaded) return Promise.resolve()
+      if (!initialLoad) initialLoad = this.fetchUser()
+      return initialLoad
     },
     async register(name: string, email: string, password: string, password_confirmation: string) {
       await ensureCsrfCookie()

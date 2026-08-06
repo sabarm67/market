@@ -26,7 +26,9 @@ human-readable summary and conventions.
 | `/companies/*` | Company search, profile, fundamentals, technicals | Public |
 | `/watchlists/*` | CRUD for the current user's watchlists | Auth required |
 | `/shariah/*` | Shariah status lookups, browse, admin import | Public (read) / Admin (import) |
-| `/screener`, `/sectors` | Multi-criteria stock screener (post-MVP, [FRS Module 7](../01-requirements/functional-requirements-specification.md#module-7-stock-screener)) | Public |
+| `/screener`, `/sectors` | Multi-criteria stock screener ([FRS Module 7](../01-requirements/functional-requirements-specification.md#module-7-stock-screener)) | Public |
+| `/alerts/*` | Watchlist alert rules and triggered-alert history ([FRS Module 8](../01-requirements/functional-requirements-specification.md#module-8-watchlist-alerts)) | Auth required |
+| `/portfolios/*` | Portfolio, transaction, and holdings management ([FRS Module 9](../01-requirements/functional-requirements-specification.md#module-9-portfolio-management)) | Auth required |
 
-No endpoints exist for alerts, portfolio, or AI chat yet — see
+No endpoints exist for AI chat yet — see
 [`future-enhancements-roadmap.md`](../07-roadmap/future-enhancements-roadmap.md).

@@ -177,9 +177,79 @@ CREATE TABLE watchlist_items (
 );
 ```
 
+## `alert_rules`
+
+```sql
+CREATE TABLE alert_rules (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    watchlist_item_id BIGINT UNSIGNED NOT NULL,
+    type VARCHAR(30) NOT NULL,          -- 'price_change_pct', 'volume_spike', 'new_52w_high', 'new_52w_low', 'shariah_status_change'
+    direction VARCHAR(10) NULL,         -- 'up', 'down', 'either' — price_change_pct only
+    threshold DECIMAL(10,4) NULL,       -- % for price_change_pct, multiplier for volume_spike
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    CONSTRAINT fk_alert_rules_item FOREIGN KEY (watchlist_item_id) REFERENCES watchlist_items(id) ON DELETE CASCADE
+);
+```
+
+## `alert_triggers`
+
+```sql
+CREATE TABLE alert_triggers (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    alert_rule_id BIGINT UNSIGNED NOT NULL,
+    trigger_date DATE NOT NULL,         -- trading day evaluated
+    message TEXT NOT NULL,
+    notified_at TIMESTAMP NULL,         -- set once included in a sent digest email
+    read_at TIMESTAMP NULL,
+    UNIQUE KEY uq_alert_trigger_date (alert_rule_id, trigger_date),
+    CONSTRAINT fk_alert_triggers_rule FOREIGN KEY (alert_rule_id) REFERENCES alert_rules(id) ON DELETE CASCADE
+);
+```
+
+*Unique key on `(alert_rule_id, trigger_date)` prevents duplicate triggers if the daily
+evaluation command reruns for the same trading day (FR-ALT-5).*
+
+## `portfolios`
+
+```sql
+CREATE TABLE portfolios (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    CONSTRAINT fk_portfolios_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+## `portfolio_transactions`
+
+```sql
+CREATE TABLE portfolio_transactions (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    portfolio_id BIGINT UNSIGNED NOT NULL,
+    security_id BIGINT UNSIGNED NOT NULL,
+    type VARCHAR(10) NOT NULL,          -- 'buy', 'sell'
+    quantity DECIMAL(15,4) NOT NULL,
+    price DECIMAL(12,4) NOT NULL,       -- per share at transaction
+    transaction_date DATE NOT NULL,
+    notes TEXT NULL,
+    created_at TIMESTAMP NULL,
+    KEY idx_portfolio_txn (portfolio_id, security_id),
+    CONSTRAINT fk_pt_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_pt_security FOREIGN KEY (security_id) REFERENCES securities(id)
+);
+```
+
+*No `portfolio_holdings` table — holdings, average cost, and gain/loss are computed on
+read from this ledger via the average cost method
+([ADR-0010](../decisions/0010-portfolio-cost-method.md)), not stored.*
+
 ## Deferred Tables (Roadmap Appendix)
 
-`organizations`, `portfolios`, `portfolio_holdings`, `transactions`, `alerts`,
-`alert_channels`, `news_articles`, `embeddings` (vector store for RAG), `screener_queries`,
-`subscriptions`/`tiers`. Not created in this phase — see
+`organizations`, `alert_channels` (SMS/Telegram/WhatsApp — email-only for now, see
+[ADR-0009](../decisions/0009-email-provider.md)), `news_articles`, `embeddings` (vector
+store for RAG), `subscriptions`/`tiers`. Not created in this phase — see
 [`future-enhancements-roadmap.md`](../07-roadmap/future-enhancements-roadmap.md).

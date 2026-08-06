@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(Watchlist::class);
     }
 
+    public function portfolios(): HasMany
+    {
+        return $this->hasMany(Portfolio::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

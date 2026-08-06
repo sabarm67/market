@@ -5,7 +5,7 @@ info:
     MVP API — Bursa Malaysia only, 6 core modules, plus post-MVP roadmap modules as
     they're delivered (see docs/07-roadmap/future-enhancements-roadmap.md). See
     docs/00-overview/mvp-scope-definition.md for the MVP scope baseline.
-  version: "0.2.0"
+  version: "0.3.0"
 servers:
   - url: /api/v1
 
@@ -16,6 +16,8 @@ tags:
   - name: Watchlists
   - name: Shariah
   - name: Screener
+  - name: Alerts
+  - name: Portfolios
 
 paths:
   /auth/register:
@@ -385,6 +387,192 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Sector" }
 
+  /alerts/rules:
+    get:
+      tags: [Alerts]
+      summary: List the current user's alert rules
+      security: [{ sanctumSession: [] }]
+      responses:
+        "200":
+          description: Alert rules
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/AlertRule" } }
+    post:
+      tags: [Alerts]
+      summary: Create an alert rule on a watchlist item
+      security: [{ sanctumSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [watchlist_item_id, type]
+              properties:
+                watchlist_item_id: { type: integer }
+                type: { type: string, enum: [price_change_pct, volume_spike, new_52w_high, new_52w_low, shariah_status_change] }
+                direction: { type: string, enum: [up, down, either] }
+                threshold: { type: number, description: "Required for price_change_pct and volume_spike" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertRule" }
+
+  /alerts/rules/{rule}:
+    patch:
+      tags: [Alerts]
+      summary: Update an alert rule (active state, threshold, direction)
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: rule
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertRule" }
+    delete:
+      tags: [Alerts]
+      summary: Delete an alert rule
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: rule
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Deleted }
+
+  /alerts/triggers:
+    get:
+      tags: [Alerts]
+      summary: List the current user's recent triggered alerts
+      security: [{ sanctumSession: [] }]
+      responses:
+        "200":
+          description: Recent triggers, most recent first (max 50)
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/AlertTrigger" } }
+
+  /alerts/triggers/{trigger}/read:
+    post:
+      tags: [Alerts]
+      summary: Mark a triggered alert as read
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: trigger
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Marked read }
+
+  /portfolios:
+    get:
+      tags: [Portfolios]
+      summary: List the current user's portfolios with a quick summary
+      security: [{ sanctumSession: [] }]
+      responses:
+        "200":
+          description: Portfolios
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/PortfolioSummary" } }
+    post:
+      tags: [Portfolios]
+      summary: Create a portfolio
+      security: [{ sanctumSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        "201": { description: Created }
+
+  /portfolios/{portfolio}:
+    get:
+      tags: [Portfolios]
+      summary: Full portfolio detail — holdings, sector allocation, totals, transaction history
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: portfolio
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Portfolio detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PortfolioDetail" }
+    delete:
+      tags: [Portfolios]
+      summary: Delete a portfolio and its transactions
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: portfolio
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Deleted }
+
+  /portfolios/{portfolio}/transactions:
+    post:
+      tags: [Portfolios]
+      summary: Add a buy/sell transaction to a portfolio
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: portfolio
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [security_id, type, quantity, price, transaction_date]
+              properties:
+                security_id: { type: integer }
+                type: { type: string, enum: [buy, sell] }
+                quantity: { type: number }
+                price: { type: number, description: "Per share" }
+                transaction_date: { type: string, format: date }
+                notes: { type: string }
+      responses:
+        "201": { description: Created }
+
+  /portfolios/{portfolio}/transactions/{transaction}:
+    delete:
+      tags: [Portfolios]
+      summary: Remove a transaction (holdings/gain-loss recalculate accordingly)
+      security: [{ sanctumSession: [] }]
+      parameters:
+        - in: path
+          name: portfolio
+          required: true
+          schema: { type: integer }
+        - in: path
+          name: transaction
+          required: true
+          schema: { type: integer }
+      responses:
+        "204": { description: Deleted }
+
 components:
   securitySchemes:
     sanctumSession:
@@ -581,3 +769,86 @@ components:
               dividend_yield: { type: number, nullable: true }
               revenue_growth_pct: { type: number, nullable: true }
               rsi: { type: number, nullable: true }
+
+    AlertRule:
+      type: object
+      properties:
+        id: { type: integer }
+        watchlist_item_id: { type: integer }
+        stock_code: { type: string }
+        name: { type: string }
+        type: { type: string, enum: [price_change_pct, volume_spike, new_52w_high, new_52w_low, shariah_status_change] }
+        direction: { type: string, enum: [up, down, either], nullable: true }
+        threshold: { type: number, nullable: true }
+        active: { type: boolean }
+
+    AlertTrigger:
+      type: object
+      properties:
+        id: { type: integer }
+        stock_code: { type: string }
+        type: { type: string }
+        trigger_date: { type: string, format: date }
+        message: { type: string }
+        read_at: { type: string, format: date-time, nullable: true }
+
+    PortfolioSummary:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        market_value: { type: number }
+        unrealized_gain: { type: number }
+        unrealized_gain_pct: { type: number, nullable: true }
+
+    Holding:
+      type: object
+      properties:
+        stock_code: { type: string }
+        name: { type: string }
+        sector: { type: string, nullable: true }
+        quantity: { type: number }
+        avg_cost: { type: number, nullable: true }
+        cost_basis: { type: number }
+        latest_price: { type: number, nullable: true }
+        market_value: { type: number, nullable: true }
+        unrealized_gain: { type: number, nullable: true }
+        unrealized_gain_pct: { type: number, nullable: true }
+        realized_gain: { type: number }
+        allocation_pct: { type: number, nullable: true }
+
+    PortfolioDetail:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        holdings: { type: array, items: { $ref: "#/components/schemas/Holding" } }
+        sector_allocation:
+          type: array
+          items:
+            type: object
+            properties:
+              sector: { type: string }
+              market_value: { type: number }
+              pct: { type: number }
+        totals:
+          type: object
+          properties:
+            market_value: { type: number }
+            cost_basis: { type: number }
+            unrealized_gain: { type: number }
+            unrealized_gain_pct: { type: number, nullable: true }
+            realized_gain: { type: number }
+        transactions:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer }
+              stock_code: { type: string }
+              name: { type: string }
+              type: { type: string, enum: [buy, sell] }
+              quantity: { type: number }
+              price: { type: number }
+              transaction_date: { type: string, format: date }
+              notes: { type: string, nullable: true }

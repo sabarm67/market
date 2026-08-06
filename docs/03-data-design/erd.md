@@ -1,9 +1,11 @@
 # Entity Relationship Diagram (ERD)
 
-Scope: MVP entities only, per
-[`glossary-data-dictionary.md`](../00-overview/glossary-data-dictionary.md#mvp-data-entities-see-erd-for-full-detail).
-Deferred entities (Organization, Portfolio, Transaction, Alert, AlertChannel, NewsArticle,
-Embedding/VectorStore) are listed in the appendix at the bottom, not modeled here.
+Scope: MVP entities, per
+[`glossary-data-dictionary.md`](../00-overview/glossary-data-dictionary.md#mvp-data-entities-see-erd-for-full-detail),
+plus post-MVP entities added for the Stock Screener, Watchlist Alerts, and Portfolio
+Management modules (see [§ Post-MVP Additions](#post-mvp-additions) below). Remaining
+deferred entities (Organization, NewsArticle, Embedding/VectorStore) are listed in the
+appendix at the bottom, not modeled here.
 
 ## Diagram
 
@@ -113,6 +115,71 @@ erDiagram
     }
 ```
 
+## Post-MVP Additions
+
+Stock Screener (FRS Module 7) needed no new entities — only `shares_outstanding` on
+`FUNDAMENTAL_DATA`, shown above. Watchlist Alerts and Portfolio Management added these:
+
+```mermaid
+erDiagram
+    WATCHLIST_ITEM ||--o{ ALERT_RULE : "has"
+    ALERT_RULE ||--o{ ALERT_TRIGGER : "produces"
+    USER ||--o{ PORTFOLIO : owns
+    PORTFOLIO ||--o{ PORTFOLIO_TRANSACTION : "has"
+    SECURITY ||--o{ PORTFOLIO_TRANSACTION : "referenced by"
+
+    ALERT_RULE {
+        bigint id PK
+        bigint watchlist_item_id FK
+        string type "price_change_pct, volume_spike, new_52w_high, new_52w_low, shariah_status_change"
+        string direction "up, down, either — price_change_pct only"
+        decimal threshold "nullable — n/a for high/low/shariah types"
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ALERT_TRIGGER {
+        bigint id PK
+        bigint alert_rule_id FK
+        date trigger_date "trading day evaluated; unique with alert_rule_id"
+        text message
+        timestamp notified_at "set once included in a sent digest"
+        timestamp read_at
+    }
+
+    PORTFOLIO {
+        bigint id PK
+        bigint user_id FK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PORTFOLIO_TRANSACTION {
+        bigint id PK
+        bigint portfolio_id FK
+        bigint security_id FK
+        string type "buy, sell"
+        decimal quantity
+        decimal price "per share at transaction"
+        date transaction_date
+        text notes
+        timestamp created_at
+    }
+```
+
+Notes:
+
+- **AlertRule attaches to WatchlistItem, not Security directly** — alerts are explicitly
+  "Watchlist Alerts" (FR-ALT-1); a security must already be on a watchlist to alert on it.
+- **AlertTrigger is append-only with a `(alert_rule_id, trigger_date)` unique constraint**
+  — prevents duplicate triggers if the daily evaluation command reruns (FR-ALT-5).
+- **Portfolio holdings/cost-basis/gain-loss are computed, not stored** — derived from
+  `PORTFOLIO_TRANSACTION` on every read via average cost method
+  ([ADR-0010](../decisions/0010-portfolio-cost-method.md)), so there's no `PortfolioHolding`
+  table.
+
 ## Notes
 
 - **Company : Security is 1:1 in MVP** — Bursa-listed companies in scope have a single
@@ -131,7 +198,7 @@ erDiagram
 
 ## Appendix: Deferred Entities (Roadmap, Not Modeled Here)
 
-Organization/Tenant (see [ADR-0001](../decisions/0001-tenancy-model.md)), Portfolio,
-PortfolioHolding, Transaction, Alert, AlertChannel, NewsArticle, Embedding/VectorStore
-(for AI/RAG), ScreenerQuery, Tier/Subscription. These will require schema additions when
-their owning modules are built.
+Organization/Tenant (see [ADR-0001](../decisions/0001-tenancy-model.md)), AlertChannel
+(SMS/Telegram/WhatsApp — email-only for now, see [ADR-0009](../decisions/0009-email-provider.md)),
+NewsArticle, Embedding/VectorStore (for AI/RAG), Tier/Subscription. These will require
+schema additions when their owning modules are built.

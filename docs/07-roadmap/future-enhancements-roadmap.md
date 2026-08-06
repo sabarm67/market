@@ -35,10 +35,16 @@ regime — treat as a significant scope addition, not a config toggle.
   Shariah status, market cap, PE, PB, ROE, debt/equity, dividend yield, revenue growth,
   volume, RSI) — see [FRS Module 7](../01-requirements/functional-requirements-specification.md#module-7-stock-screener).
   Custom formula builder remains a future enhancement.
-- **Portfolio Management** — multiple portfolios, allocation analysis, performance
-  benchmarking, tax estimation, AI rebalancing suggestions
-- **Alert Engine** — price/volume/corporate-action alerts via email, SMS, push, Telegram,
-  WhatsApp
+- ~~**Portfolio Management**~~ — **Delivered** (holdings, average-cost gain/loss, sector
+  allocation) — see [FRS Module 9](../01-requirements/functional-requirements-specification.md#module-9-portfolio-management).
+  Performance benchmarking (vs. an index), tax estimation, and AI rebalancing suggestions
+  remain future enhancements.
+- ~~**Alert Engine**~~ — **Partially delivered** as Watchlist Alerts (price change %,
+  volume spike, new 52-week high/low, Shariah status change — email digest only) — see
+  [FRS Module 8](../01-requirements/functional-requirements-specification.md#module-8-watchlist-alerts)
+  and [ADR-0009](../decisions/0009-email-provider.md). SMS, push, Telegram, and WhatsApp
+  delivery channels, plus dividend-declared/quarterly-results/analyst-upgrade alert types
+  (no supporting data yet), remain future enhancements.
 - **Advanced Charting** — Renko, Point & Figure, Market Profile, VWAP, drawing tools
   (Fibonacci, Gann, Pitchfork), multi-chart layout, replay mode, backtesting
 - **Extended Shariah Module** — screening ratio breakdowns (debt/cash ratios, business

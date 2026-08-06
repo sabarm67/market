@@ -117,9 +117,40 @@ system, no new external dependencies.
 *Custom formula builder (from the original spec) remains a future enhancement — this
 covers standard fixed-criteria filtering only.*
 
+## Module 8: Watchlist Alerts
+
+Scoped to the four alert conditions our existing data actually supports; SMS/Telegram/
+WhatsApp delivery channels remain future enhancements (email only, via
+[ADR-0009](../decisions/0009-email-provider.md)).
+
+| ID | Requirement |
+|---|---|
+| FR-ALT-1 | A user can create an alert rule on any security already in one of their watchlists. |
+| FR-ALT-2 | Alert types: price change % (with up/down/either direction), volume spike (× recent average volume), new 52-week high, new 52-week low, Shariah status change. |
+| FR-ALT-3 | Rules can be toggled active/paused and deleted, without deleting the underlying watchlist item. |
+| FR-ALT-4 | Rules are evaluated once daily (per [ADR-0002](../decisions/0002-realtime-delivery-mechanism.md)'s batch data model), not in real time. |
+| FR-ALT-5 | A triggered rule is recorded once per trading day (no duplicate triggers for the same condition on the same day, even if evaluation reruns). |
+| FR-ALT-6 | All of a user's new triggers for a given day are sent as a single digest email, not one email per alert. |
+| FR-ALT-7 | A user can view their recent triggered alerts in-app and mark them read, independent of whether the digest email was delivered. |
+
+## Module 9: Portfolio Management
+
+Tax estimation and AI-generated rebalancing suggestions (from the original spec) remain
+future enhancements — this covers holdings tracking, valuation, and allocation only.
+
+| ID | Requirement |
+|---|---|
+| FR-PF-1 | A user can create and delete multiple named portfolios. |
+| FR-PF-2 | A user can record buy/sell transactions (security, quantity, price, date, optional notes) against a portfolio. |
+| FR-PF-3 | Holdings, average cost, and cost basis are computed from the transaction ledger using the average cost method ([ADR-0010](../decisions/0010-portfolio-cost-method.md)), not entered directly. |
+| FR-PF-4 | Display market value and unrealized gain/loss (RM and %) per holding and for the portfolio total, using latest available price. |
+| FR-PF-5 | Display realized gain/loss per holding and portfolio total, accumulated across all sell transactions. |
+| FR-PF-6 | Display sector allocation (% of portfolio market value) and per-security allocation %. |
+| FR-PF-7 | A transaction can be removed, with holdings/gain-loss recalculated accordingly. |
+
 ## Roadmap Modules (Not Specified Here)
 
-AI Recommendation Engine, AI News Intelligence, AI Research Assistant, Portfolio
-Management, Alert Engine, advanced/TradingView-level charting, professional report
-generation/export, and all non-Bursa-Malaysia markets. See
+AI Recommendation Engine, AI News Intelligence, AI Research Assistant, advanced/
+TradingView-level charting, professional report generation/export, and all non-Bursa-
+Malaysia markets. See
 [`future-enhancements-roadmap.md`](../07-roadmap/future-enhancements-roadmap.md).

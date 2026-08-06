@@ -32,6 +32,8 @@ async function doLogout() {
         <router-link to="/screener" class="hover:text-brand-600">Screener</router-link>
         <router-link to="/shariah" class="hover:text-brand-600">Shariah</router-link>
         <router-link v-if="auth.isAuthenticated" to="/watchlist" class="hover:text-brand-600">Watchlist</router-link>
+        <router-link v-if="auth.isAuthenticated" to="/alerts" class="hover:text-brand-600">Alerts</router-link>
+        <router-link v-if="auth.isAuthenticated" to="/portfolio" class="hover:text-brand-600">Portfolio</router-link>
         <router-link v-if="auth.isAdmin" to="/admin/shariah-import" class="hover:text-brand-600">Admin</router-link>
       </nav>
 
@@ -63,6 +65,8 @@ async function doLogout() {
       <router-link to="/screener" @click="menuOpen = false">Screener</router-link>
       <router-link to="/shariah" @click="menuOpen = false">Shariah</router-link>
       <router-link v-if="auth.isAuthenticated" to="/watchlist" @click="menuOpen = false">Watchlist</router-link>
+      <router-link v-if="auth.isAuthenticated" to="/alerts" @click="menuOpen = false">Alerts</router-link>
+      <router-link v-if="auth.isAuthenticated" to="/portfolio" @click="menuOpen = false">Portfolio</router-link>
       <router-link v-if="auth.isAdmin" to="/admin/shariah-import" @click="menuOpen = false">Admin</router-link>
       <template v-if="auth.isAuthenticated">
         <button class="text-left" @click="doLogout(); menuOpen = false">Logout</button>

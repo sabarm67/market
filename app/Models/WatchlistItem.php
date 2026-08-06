@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WatchlistItem extends Model
 {
@@ -26,5 +27,10 @@ class WatchlistItem extends Model
     public function security(): BelongsTo
     {
         return $this->belongsTo(Security::class);
+    }
+
+    public function alertRules(): HasMany
+    {
+        return $this->hasMany(AlertRule::class);
     }
 }
