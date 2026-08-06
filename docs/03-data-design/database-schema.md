@@ -107,6 +107,7 @@ CREATE TABLE fundamental_data (
     debt_equity DECIMAL(6,3) NULL,
     current_ratio DECIMAL(6,3) NULL,
     dividend_per_share DECIMAL(10,4) NULL,
+    shares_outstanding BIGINT UNSIGNED NULL,   -- added post-MVP for Stock Screener market cap
     ingested_at TIMESTAMP NULL,
     UNIQUE KEY uq_fundamental_company_period (company_id, period_type, period_end),
     CONSTRAINT fk_fundamental_company FOREIGN KEY (company_id) REFERENCES companies(id)

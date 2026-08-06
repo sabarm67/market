@@ -2,9 +2,10 @@ openapi: 3.0.3
 info:
   title: Share Market Monitoring & Investment Intelligence Platform API
   description: >
-    MVP API — Bursa Malaysia only, 6 core modules. See
-    docs/00-overview/mvp-scope-definition.md for scope.
-  version: "0.1.0-mvp"
+    MVP API — Bursa Malaysia only, 6 core modules, plus post-MVP roadmap modules as
+    they're delivered (see docs/07-roadmap/future-enhancements-roadmap.md). See
+    docs/00-overview/mvp-scope-definition.md for the MVP scope baseline.
+  version: "0.2.0"
 servers:
   - url: /api/v1
 
@@ -14,6 +15,7 @@ tags:
   - name: Companies
   - name: Watchlists
   - name: Shariah
+  - name: Screener
 
 paths:
   /auth/register:
@@ -304,6 +306,85 @@ paths:
         "200": { description: Import committed }
         "403": { description: Admin role required }
 
+  /screener:
+    get:
+      tags: [Screener]
+      summary: Multi-criteria stock screener (see FRS Module 7)
+      parameters:
+        - in: query
+          name: sector_id
+          schema: { type: integer }
+        - in: query
+          name: sub_market
+          schema: { type: string, enum: [Main, ACE, LEAP] }
+        - in: query
+          name: shariah_status
+          schema: { type: string, enum: [compliant, non_compliant] }
+        - in: query
+          name: market_cap_min
+          schema: { type: number }
+        - in: query
+          name: market_cap_max
+          schema: { type: number }
+        - in: query
+          name: pe_min
+          schema: { type: number }
+        - in: query
+          name: pe_max
+          schema: { type: number }
+        - in: query
+          name: pb_min
+          schema: { type: number }
+        - in: query
+          name: pb_max
+          schema: { type: number }
+        - in: query
+          name: roe_min
+          schema: { type: number }
+        - in: query
+          name: dividend_yield_min
+          schema: { type: number }
+        - in: query
+          name: debt_equity_max
+          schema: { type: number }
+        - in: query
+          name: revenue_growth_min
+          schema: { type: number, description: "Year-over-year %, from the two most recent annual periods" }
+        - in: query
+          name: volume_min
+          schema: { type: integer }
+        - in: query
+          name: rsi_min
+          schema: { type: number }
+        - in: query
+          name: rsi_max
+          schema: { type: number }
+        - in: query
+          name: sort_by
+          schema: { type: string, enum: [market_cap, pe, pb, roe, dividend_yield, debt_equity, revenue_growth_pct, volume, rsi], default: stock_code }
+        - in: query
+          name: sort_dir
+          schema: { type: string, enum: [asc, desc], default: asc }
+      responses:
+        "200":
+          description: Filtered, sorted list of securities
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScreenerResponse" }
+
+  /sectors:
+    get:
+      tags: [Screener]
+      summary: List all sectors (for the screener's sector filter)
+      responses:
+        "200":
+          description: Sector list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Sector" }
+
 components:
   securitySchemes:
     sanctumSession:
@@ -468,3 +549,35 @@ components:
         stock_code: { type: string }
         name: { type: string }
         status: { type: string, enum: [compliant, non_compliant] }
+
+    Sector:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        industry: { type: string, nullable: true }
+
+    ScreenerResponse:
+      type: object
+      properties:
+        total: { type: integer }
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              stock_code: { type: string }
+              name: { type: string }
+              sector: { type: string, nullable: true }
+              sub_market: { type: string, nullable: true }
+              shariah_status: { type: string, enum: [compliant, non_compliant], nullable: true }
+              price: { type: number }
+              volume: { type: integer }
+              market_cap: { type: number, nullable: true }
+              pe: { type: number, nullable: true }
+              pb: { type: number, nullable: true }
+              roe: { type: number }
+              debt_equity: { type: number }
+              dividend_yield: { type: number, nullable: true }
+              revenue_growth_pct: { type: number, nullable: true }
+              rsi: { type: number, nullable: true }

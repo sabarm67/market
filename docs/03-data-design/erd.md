@@ -76,6 +76,7 @@ erDiagram
         decimal debt_equity
         decimal current_ratio
         decimal dividend_per_share
+        bigint shares_outstanding "added for Stock Screener market cap"
         timestamp ingested_at
     }
 

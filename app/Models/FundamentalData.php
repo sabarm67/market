@@ -14,7 +14,7 @@ class FundamentalData extends Model
     protected $fillable = [
         'company_id', 'period_type', 'period_end', 'revenue', 'net_profit', 'eps',
         'book_value_per_share', 'roe', 'roa', 'debt_equity', 'current_ratio',
-        'dividend_per_share', 'ingested_at',
+        'dividend_per_share', 'shares_outstanding', 'ingested_at',
     ];
 
     protected function casts(): array

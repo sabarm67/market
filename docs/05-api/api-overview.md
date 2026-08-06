@@ -17,7 +17,7 @@ human-readable summary and conventions.
 - **Timestamps:** all data-freshness fields (`as_of`, `source_publication_date`) are ISO
   8601, per NFR-D1/NFR-D2.
 
-## Endpoint Groups (MVP Only)
+## Endpoint Groups
 
 | Group | Purpose | Auth |
 |---|---|---|
@@ -26,6 +26,7 @@ human-readable summary and conventions.
 | `/companies/*` | Company search, profile, fundamentals, technicals | Public |
 | `/watchlists/*` | CRUD for the current user's watchlists | Auth required |
 | `/shariah/*` | Shariah status lookups, browse, admin import | Public (read) / Admin (import) |
+| `/screener`, `/sectors` | Multi-criteria stock screener (post-MVP, [FRS Module 7](../01-requirements/functional-requirements-specification.md#module-7-stock-screener)) | Public |
 
-No endpoints exist for alerts, portfolio, screener, or AI chat in MVP — see
+No endpoints exist for alerts, portfolio, or AI chat yet — see
 [`future-enhancements-roadmap.md`](../07-roadmap/future-enhancements-roadmap.md).

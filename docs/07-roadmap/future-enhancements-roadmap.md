@@ -31,7 +31,10 @@ regime — treat as a significant scope addition, not a config toggle.
 
 ## Additional Feature Modules
 
-- **Stock Screener** — multi-criteria filtering with a custom formula builder
+- ~~**Stock Screener**~~ — **Delivered.** Multi-criteria filtering (sector, sub-market,
+  Shariah status, market cap, PE, PB, ROE, debt/equity, dividend yield, revenue growth,
+  volume, RSI) — see [FRS Module 7](../01-requirements/functional-requirements-specification.md#module-7-stock-screener).
+  Custom formula builder remains a future enhancement.
 - **Portfolio Management** — multiple portfolios, allocation analysis, performance
   benchmarking, tax estimation, AI rebalancing suggestions
 - **Alert Engine** — price/volume/corporate-action alerts via email, SMS, push, Telegram,

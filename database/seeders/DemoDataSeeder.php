@@ -183,6 +183,7 @@ class DemoDataSeeder extends Seeder
                 'debt_equity' => round(mt_rand(10, 90) / 100, 3),
                 'current_ratio' => round(mt_rand(90, 250) / 100, 3),
                 'dividend_per_share' => round(mt_rand(1, 15) / 100, 4),
+                'shares_outstanding' => $sharesOutstanding,
                 'ingested_at' => now(),
             ]);
         }

@@ -6,6 +6,7 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'dashboard', component: () => import('../views/DashboardView.vue') },
     { path: '/companies/:stockCode', name: 'company-profile', component: () => import('../views/CompanyProfileView.vue'), props: true },
+    { path: '/screener', name: 'screener', component: () => import('../views/ScreenerView.vue') },
     { path: '/shariah', name: 'shariah-browse', component: () => import('../views/ShariahBrowseView.vue') },
     { path: '/watchlist', name: 'watchlist', component: () => import('../views/WatchlistView.vue'), meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },

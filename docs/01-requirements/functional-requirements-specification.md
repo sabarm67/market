@@ -98,9 +98,28 @@ roadmap items (notifications require the Alert Engine; ratio breakdowns require 
 SC's underlying screening data, not just the pass/fail list, which is a data-availability
 question beyond the current manual-import approach).*
 
+## Module 7: Stock Screener
+
+Added post-MVP (first roadmap module delivered) — builds entirely on data already in the
+system, no new external dependencies.
+
+| ID | Requirement |
+|---|---|
+| FR-SCR-1 | Filter Bursa-listed securities by sector, sub-market, and current Shariah status. |
+| FR-SCR-2 | Filter by market capitalization (min/max), computed from latest price × shares outstanding. |
+| FR-SCR-3 | Filter by PE and PB ratio (max thresholds), computed from latest price and latest annual fundamentals. |
+| FR-SCR-4 | Filter by ROE (min), Debt/Equity (max), Dividend Yield (min, computed from dividend per share ÷ price). |
+| FR-SCR-5 | Filter by year-over-year revenue growth (min), computed from the two most recent annual fundamental periods. |
+| FR-SCR-6 | Filter by latest trading volume (min) and RSI(14) (min/max), computed the same way as FR-TECH-4's indicator. |
+| FR-SCR-7 | Sort results by any of the computed columns, ascending or descending. |
+| FR-SCR-8 | Each result links through to that security's Company Profile. |
+
+*Custom formula builder (from the original spec) remains a future enhancement — this
+covers standard fixed-criteria filtering only.*
+
 ## Roadmap Modules (Not Specified Here)
 
-AI Recommendation Engine, AI News Intelligence, AI Research Assistant, Stock Screener,
-Portfolio Management, Alert Engine, advanced/TradingView-level charting, professional
-report generation/export, and all non-Bursa-Malaysia markets. See
+AI Recommendation Engine, AI News Intelligence, AI Research Assistant, Portfolio
+Management, Alert Engine, advanced/TradingView-level charting, professional report
+generation/export, and all non-Bursa-Malaysia markets. See
 [`future-enhancements-roadmap.md`](../07-roadmap/future-enhancements-roadmap.md).
