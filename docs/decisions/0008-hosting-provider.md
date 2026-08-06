@@ -16,20 +16,22 @@ written cloud-agnostic pending this decision.
 with a MySQL database (`market`, user `adminmarket`). Forge deploys automatically on
 push to the GitHub `main` branch.
 
-Since the repo is a monorepo (`backend/` = Laravel, `frontend/` = Vue) rather than a
-Laravel app at repo root, two Forge-specific adjustments apply:
+The repo was initially laid out with Laravel nested under `/backend`, which fought
+Forge's assumptions (Web Directory default, `.env` location) at every turn. Laravel now
+lives at the repo root instead, with only the Vue frontend in its own subdirectory — see
+[ADR-0006](0006-repo-structure.md). With that layout:
 
-- Forge's site **Web Directory** is set to `backend/public` (not the repo root).
-- The Vue SPA is built during deploy straight into `backend/public/app`
-  ([`vite.config.ts`](../../frontend/vite.config.ts)), and Laravel serves it via a
-  catch-all route ([`routes/web.php`](../../backend/routes/web.php)) for any path that
-  isn't `/api/*` or `/sanctum/*`. This makes the SPA and API same-origin in production,
-  which is why [ADR-0002](0002-realtime-delivery-mechanism.md)'s CORS/Sanctum
-  cross-domain setup is a dev-only concern — production needs neither.
+- Forge's site **Web Directory** stays at its default, `public`.
+- The Vue SPA is built during deploy straight into `public/app`
+  ([`frontend/vite.config.ts`](../../frontend/vite.config.ts)), and Laravel serves it via
+  a catch-all route ([`routes/web.php`](../../routes/web.php)) for any path that isn't
+  `/api/*` or `/sanctum/*`. This makes the SPA and API same-origin in production, which
+  is why [ADR-0002](0002-realtime-delivery-mechanism.md)'s CORS/Sanctum cross-domain
+  setup is a dev-only concern — production needs neither.
 
 See [`deploy/forge-deploy.sh`](../../deploy/forge-deploy.sh) for the deploy script and
-[`backend/.env.production.example`](../../backend/.env.production.example) for the
-environment template (Forge's Environment tab).
+[`.env.production.example`](../../.env.production.example) for the environment template
+(Forge's Environment tab).
 
 ## Consequences
 

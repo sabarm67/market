@@ -8,12 +8,13 @@ export default defineConfig({
   server: {
     port: 5173,
   },
-  // Production build is emitted straight into the Laravel app's public dir so one
-  // Forge site (backend/public as web root) serves both the SPA and the API — see
-  // backend/routes/web.php for the catch-all route that serves this build's index.html.
+  // Production build is emitted straight into the Laravel app's public dir (Laravel
+  // lives at the repo root — see ADR-0006) so one Forge site (public/ as web root)
+  // serves both the SPA and the API — see ../routes/web.php for the catch-all route
+  // that serves this build's index.html.
   base: '/app/',
   build: {
-    outDir: '../backend/public/app',
+    outDir: '../public/app',
     emptyOutDir: true,
   },
 })
