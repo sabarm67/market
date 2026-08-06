@@ -18,7 +18,7 @@
 | D1 | Bursa Malaysia market data feed (licensed) or a third-party aggregator (Alpha Vantage, Polygon.io, Finnhub, Twelve Data, Financial Modeling Prep) covering Bursa-listed securities | **Not procured** | Any real data ingestion; System/Infrastructure Architecture written provider-agnostic in the meantime. |
 | D2 | Claude and/or OpenAI API key | **Not procured** | All AI-dependent modules — explicitly out of MVP scope because of this (see AI Architecture). |
 | D3 | SC Malaysia Shariah-compliant securities list access (public PDF/Excel, published biannually) | Publicly available, not yet integrated into any process | Shariah Compliance module — MVP works around this via manual curated import (ADR-0003). |
-| D4 | Hosting/cloud provider account (AWS/Azure/GCP/local Malaysian hosting) | **Not selected** | Infrastructure Architecture is written cloud-agnostic pending this decision (ADR-0008). |
+| D4 | Hosting/cloud provider account | **Resolved** — Laravel Forge, site `market.rcaquacycle.com`, MySQL DB `market` | Was blocking Infrastructure Architecture's provider-specific detail; see [ADR-0008](../decisions/0008-hosting-provider.md). |
 | D5 | Company fundamental data source (financial statements, ratios) for Bursa-listed companies | **Not procured** — likely bundled with D1 or a separate provider | Fundamental Analysis module data ingestion. |
 
 ## Risks
