@@ -8,6 +8,9 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Bursa Malaysia closes 5pm; run after close, before alerts:evaluate reads today's prices.
+Schedule::command('market:sync')->dailyAt('18:00');
+
 // Runs after price/Shariah data would be refreshed for the day, per ADR-0002's
 // delayed/batch data model — see FRS Module 8.
 Schedule::command('alerts:evaluate')->dailyAt('08:00');
