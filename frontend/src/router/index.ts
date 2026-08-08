@@ -5,6 +5,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'dashboard', component: () => import('../views/DashboardView.vue') },
+    { path: '/companies', name: 'companies', component: () => import('../views/CompaniesView.vue') },
     { path: '/companies/:stockCode', name: 'company-profile', component: () => import('../views/CompanyProfileView.vue'), props: true },
     { path: '/screener', name: 'screener', component: () => import('../views/ScreenerView.vue') },
     { path: '/shariah', name: 'shariah-browse', component: () => import('../views/ShariahBrowseView.vue') },

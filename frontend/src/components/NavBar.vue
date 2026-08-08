@@ -29,6 +29,7 @@ async function doLogout() {
 
       <nav class="hidden md:flex items-center gap-4 text-sm">
         <router-link to="/" class="hover:text-brand-600">Dashboard</router-link>
+        <router-link to="/companies" class="hover:text-brand-600">Companies</router-link>
         <router-link to="/screener" class="hover:text-brand-600">Screener</router-link>
         <router-link to="/shariah" class="hover:text-brand-600">Shariah</router-link>
         <router-link v-if="auth.isAuthenticated" to="/watchlist" class="hover:text-brand-600">Watchlist</router-link>
@@ -62,6 +63,7 @@ async function doLogout() {
 
     <div v-if="menuOpen" class="md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-3 flex flex-col gap-2 text-sm">
       <router-link to="/" @click="menuOpen = false">Dashboard</router-link>
+      <router-link to="/companies" @click="menuOpen = false">Companies</router-link>
       <router-link to="/screener" @click="menuOpen = false">Screener</router-link>
       <router-link to="/shariah" @click="menuOpen = false">Shariah</router-link>
       <router-link v-if="auth.isAuthenticated" to="/watchlist" @click="menuOpen = false">Watchlist</router-link>
